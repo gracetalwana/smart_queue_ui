@@ -32,6 +32,10 @@ import PeopleIcon from '@mui/icons-material/People';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import LogoutIcon from '@mui/icons-material/Logout';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+import QueueIcon from '@mui/icons-material/Queue';
+import ViewListIcon from '@mui/icons-material/ViewList';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import ucuLogo from '../assets/uculogotousenobg.png';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -48,11 +52,16 @@ const UCU = {
 };
 
 // Sidebar navigation items
+// role: undefined = all roles; 'ADMIN'/'SUPER_ADMIN' = admin-only; 'STUDENT' = student-only
 const NAV_ITEMS = [
   { path: '/dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
+  { path: '/book-slot', label: 'Book Slot', icon: <EventAvailableIcon />, role: 'STUDENT' },
+  { path: '/my-queue', label: 'My Queue', icon: <QueueIcon />, role: 'STUDENT' },
   { path: '/chapters', label: 'Chapters', icon: <MenuBookIcon /> },
-  { path: '/users', label: 'Users', icon: <PeopleIcon /> },
+  { path: '/users', label: 'Users', icon: <PeopleIcon />, role: 'ADMIN' },
   { path: '/reports', label: 'Reports', icon: <AssessmentIcon /> },
+  { path: '/admin/slots', label: 'Manage Slots', icon: <ViewListIcon />, role: 'ADMIN' },
+  { path: '/admin/queue', label: 'Queue Console', icon: <ManageAccountsIcon />, role: 'ADMIN' },
 ];
 
 // Map path → human-readable breadcrumb label
@@ -61,6 +70,10 @@ const PAGE_LABELS = {
   '/chapters': 'Chapters',
   '/users': 'Users',
   '/reports': 'Reports',
+  '/book-slot': 'Book Slot',
+  '/my-queue': 'My Queue',
+  '/admin/slots': 'Manage Slots',
+  '/admin/queue': 'Queue Console',
 };
 
 // Pick an avatar background from a small palette, based on first character of username
@@ -140,7 +153,12 @@ export default function ModernLayout({ children, user }) {
 
       {/* Navigation list */}
       <List sx={{ px: 1.5, pt: 1.5, flexGrow: 1 }}>
-        {NAV_ITEMS.map(({ path, label, icon }) => {
+        {NAV_ITEMS.filter(({ role }) => {
+          if (!role) return true;
+          if (role === 'STUDENT') return !['ADMIN', 'SUPER_ADMIN'].includes(user?.role);
+          if (role === 'ADMIN') return ['ADMIN', 'SUPER_ADMIN'].includes(user?.role);
+          return true;
+        }).map(({ path, label, icon }) => {
           const active = location.pathname === path;
           return (
             <ListItemButton
@@ -201,7 +219,7 @@ export default function ModernLayout({ children, user }) {
               {username}
             </Typography>
             <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.45)', fontSize: 10 }}>
-              Student
+              {user?.role ?? 'STUDENT'}
             </Typography>
           </Box>
           <Tooltip title="Logout">

@@ -145,3 +145,130 @@ export const deleteUser = (id, token) =>
     method: 'DELETE',
     headers: authHeaders(token),
   });
+
+// ── Slots ─────────────────────────────────────────────────────────────────────
+
+/** GET /api/slots?date=YYYY-MM-DD – Student: list available slots */
+export const getSlots = (token, date) => {
+  const qs = date ? `?date=${date}` : '';
+  return request(`${API_BASE}/slots${qs}`, { headers: authHeaders(token) });
+};
+
+/** GET /api/slots/all – Admin: list all slots */
+export const getAllSlots = (token) =>
+  request(`${API_BASE}/slots/all`, { headers: authHeaders(token) });
+
+/** GET /api/slots/:id */
+export const getSlotById = (id, token) =>
+  request(`${API_BASE}/slots/${id}`, { headers: authHeaders(token) });
+
+/** POST /api/slots – Admin: create a slot */
+export const createSlot = (slot, token) =>
+  request(`${API_BASE}/slots`, {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify(slot),
+  });
+
+/** PUT /api/slots/:id – Admin: update a slot */
+export const updateSlot = (id, slot, token) =>
+  request(`${API_BASE}/slots/${id}`, {
+    method: 'PUT',
+    headers: authHeaders(token),
+    body: JSON.stringify(slot),
+  });
+
+// ── Appointments ──────────────────────────────────────────────────────────────
+
+/** POST /api/appointments – Student books a slot */
+export const bookAppointment = (payload, token) =>
+  request(`${API_BASE}/appointments`, {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify(payload),
+  });
+
+/** GET /api/appointments/my – Student's own bookings */
+export const getMyAppointments = (token) =>
+  request(`${API_BASE}/appointments/my`, { headers: authHeaders(token) });
+
+/** GET /api/appointments?slot_id=X – Admin: appointments for a slot */
+export const getAppointmentsBySlot = (slotId, token) =>
+  request(`${API_BASE}/appointments?slot_id=${slotId}`, { headers: authHeaders(token) });
+
+/** PATCH /api/appointments/:id/cancel */
+export const cancelAppointment = (id, token) =>
+  request(`${API_BASE}/appointments/${id}/cancel`, {
+    method: 'PATCH',
+    headers: authHeaders(token),
+  });
+
+/** PATCH /api/appointments/:id/served – Admin */
+export const markServed = (id, token) =>
+  request(`${API_BASE}/appointments/${id}/served`, {
+    method: 'PATCH',
+    headers: authHeaders(token),
+  });
+
+/** PATCH /api/appointments/:id/no-show – Admin */
+export const markNoShow = (id, token) =>
+  request(`${API_BASE}/appointments/${id}/no-show`, {
+    method: 'PATCH',
+    headers: authHeaders(token),
+  });
+
+/** PATCH /api/appointments/:id/serving – Admin */
+export const markServing = (id, token) =>
+  request(`${API_BASE}/appointments/${id}/serving`, {
+    method: 'PATCH',
+    headers: authHeaders(token),
+  });
+
+// ── Notifications ─────────────────────────────────────────────────────────────
+
+/** GET /api/notifications – current user's notifications */
+export const getMyNotifications = (token) =>
+  request(`${API_BASE}/notifications`, { headers: authHeaders(token) });
+
+/** PATCH /api/notifications/:id/read */
+export const markNotificationRead = (id, token) =>
+  request(`${API_BASE}/notifications/${id}/read`, {
+    method: 'PATCH',
+    headers: authHeaders(token),
+  });
+
+/** PATCH /api/notifications/read-all */
+export const markAllNotificationsRead = (token) =>
+  request(`${API_BASE}/notifications/read-all`, {
+    method: 'PATCH',
+    headers: authHeaders(token),
+  });
+
+/** POST /api/notifications/broadcast – Admin only */
+export const broadcastNotification = (message, token) =>
+  request(`${API_BASE}/notifications/broadcast`, {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify({ message }),
+  });
+
+// ── Counters ──────────────────────────────────────────────────────────────────
+
+/** GET /api/counters */
+export const getCounters = (token) =>
+  request(`${API_BASE}/counters`, { headers: authHeaders(token) });
+
+/** POST /api/counters – Admin */
+export const createCounter = (payload, token) =>
+  request(`${API_BASE}/counters`, {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify(payload),
+  });
+
+/** PATCH /api/counters/:id/toggle – Admin */
+export const toggleCounter = (id, token) =>
+  request(`${API_BASE}/counters/${id}/toggle`, {
+    method: 'PATCH',
+    headers: authHeaders(token),
+  });

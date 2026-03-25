@@ -26,6 +26,10 @@ import Dashboard from './pages/Dashboard';
 import Chapters from './pages/Chapters';
 import Users from './pages/Users';
 import Reports from './pages/Reports';
+import BookSlot from './pages/BookSlot';
+import QueueDashboard from './pages/QueueDashboard';
+import AdminSlots from './pages/AdminSlots';
+import AdminQueue from './pages/AdminQueue';
 
 // ── Helper: decode JWT payload ────────────────────────────────────────────────
 /**
@@ -120,6 +124,52 @@ export default function AppRouter() {
             <ProtectedRoute token={token}>
               <ModernLayout onLogout={handleLogout} user={user}>
                 <Reports token={token} />
+              </ModernLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Queue / booking pages (student) */}
+        <Route
+          path="/book-slot"
+          element={
+            <ProtectedRoute token={token}>
+              <ModernLayout onLogout={handleLogout} user={user}>
+                <BookSlot token={token} />
+              </ModernLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/my-queue"
+          element={
+            <ProtectedRoute token={token}>
+              <ModernLayout onLogout={handleLogout} user={user}>
+                <QueueDashboard token={token} user={user} />
+              </ModernLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Admin pages */}
+        <Route
+          path="/admin/slots"
+          element={
+            <ProtectedRoute token={token}>
+              <ModernLayout onLogout={handleLogout} user={user}>
+                <AdminSlots token={token} />
+              </ModernLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/queue"
+          element={
+            <ProtectedRoute token={token}>
+              <ModernLayout onLogout={handleLogout} user={user}>
+                <AdminQueue token={token} />
               </ModernLayout>
             </ProtectedRoute>
           }

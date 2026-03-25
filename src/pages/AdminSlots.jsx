@@ -1,0 +1,162 @@
+/**
+ * pages/AdminSlots.jsx – Admin: create and manage time slots
+ */
+import { useState, useEffect, useCallback } from 'react';
+import {
+    Box, Typography, Button, Dialog, DialogTitle, DialogContent,
+    DialogActions, TextField, Table, TableHead, TableRow,
+    TableCell, TableBody, Chip, CircularProgress, IconButton, Tooltip,
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import { getAllSlots, createSlot, updateSlot } from '../utils/api';
+import { useToast } from '../hooks/useToast';
+import Toast from '../components/Toast';
+
+const emptyForm = { slot_date: '', start_time: '', end_time: '', capacity: 20, description: '' };
+
+export default function AdminSlots({ token }) {
+    const [slots, setSlots] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [open, setOpen] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [editId, setEditId] = useState(null);
+    const [form, setForm] = useState(emptyForm);
+    const { toast, showToast, hideToast } = useToast();
+
+    const load = useCallback(async () => {
+        try {
+            const data = await getAllSlots(token);
+            setSlots(Array.isArray(data) ? data : []);
+        } catch (err) {
+            showToast(err.message, 'error');
+        } finally {
+            setLoading(false);
+        }
+    }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => { load(); }, [load]);
+
+    const openCreate = () => { setEditId(null); setForm(emptyForm); setOpen(true); };
+    const openEdit = (s) => {
+        setEditId(s.id);
+        setForm({
+            slot_date: s.slot_date,
+            start_time: s.start_time.slice(0, 5),
+            end_time: s.end_time.slice(0, 5),
+            capacity: s.capacity,
+            description: s.description || '',
+        });
+        setOpen(true);
+    };
+
+    const handleSave = async () => {
+        setSaving(true);
+        try {
+            if (editId) {
+                await updateSlot(editId, form, token);
+                showToast('Slot updated.', 'success');
+            } else {
+                await createSlot(form, token);
+                showToast('Slot created.', 'success');
+            }
+            setOpen(false);
+            load();
+        } catch (err) {
+            showToast(err.message, 'error');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const field = (key, label, type = 'text', extra = {}) => (
+        <TextField
+            key={key}
+            label={label}
+            type={type}
+            fullWidth
+            margin="normal"
+            size="small"
+            value={form[key]}
+            onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+            slotProps={{ htmlInput: extra }}
+        />
+    );
+
+    return (
+        <Box>
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                <Typography variant="h5" fontWeight={700}>Time Slots</Typography>
+                <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>
+                    New Slot
+                </Button>
+            </Box>
+
+            {loading ? (
+                <Box display="flex" justifyContent="center" mt={6}><CircularProgress /></Box>
+            ) : (
+                <Table size="small">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Date</TableCell>
+                            <TableCell>Time</TableCell>
+                            <TableCell>Capacity</TableCell>
+                            <TableCell>Booked</TableCell>
+                            <TableCell>Status</TableCell>
+                            <TableCell align="right">Actions</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {slots.map((s) => (
+                            <TableRow key={s.id} hover>
+                                <TableCell>{s.slot_date}</TableCell>
+                                <TableCell>{s.start_time?.slice(0, 5)} – {s.end_time?.slice(0, 5)}</TableCell>
+                                <TableCell>{s.capacity}</TableCell>
+                                <TableCell>{s.booked_count}</TableCell>
+                                <TableCell>
+                                    <Chip
+                                        label={s.is_active ? 'Active' : 'Inactive'}
+                                        color={s.is_active ? 'success' : 'default'}
+                                        size="small"
+                                    />
+                                </TableCell>
+                                <TableCell align="right">
+                                    <Tooltip title="Edit">
+                                        <IconButton size="small" onClick={() => openEdit(s)}>
+                                            <EditIcon fontSize="small" />
+                                        </IconButton>
+                                    </Tooltip>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            )}
+
+            {/* Create / Edit Dialog */}
+            <Dialog open={open} onClose={() => setOpen(false)} maxWidth="xs" fullWidth>
+                <DialogTitle>{editId ? 'Edit Slot' : 'New Slot'}</DialogTitle>
+                <DialogContent>
+                    {field('slot_date', 'Date', 'date')}
+                    {field('start_time', 'Start Time', 'time')}
+                    {field('end_time', 'End Time', 'time')}
+                    {field('capacity', 'Capacity', 'number', { min: 1 })}
+                    {field('description', 'Description (optional)')}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpen(false)}>Cancel</Button>
+                    <Button
+                        variant="contained"
+                        disabled={saving}
+                        onClick={handleSave}
+                        startIcon={saving ? <CircularProgress size={14} /> : null}
+                    >
+                        {saving ? 'Saving…' : 'Save'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Toast open={toast.open} message={toast.message} severity={toast.severity} onClose={hideToast} />
+        </Box>
+    );
+}
