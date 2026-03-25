@@ -191,7 +191,7 @@ export default function AdminQueue({ token }) {
                 )
             )}
 
-            <Toast open={toast.open} message={toast.message} severity={toast.severity} onClose={hideToast} />
+            <Toast toast={toast} onClose={hideToast} />
         </Box>
     );
 }

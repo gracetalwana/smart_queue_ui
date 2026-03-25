@@ -35,7 +35,7 @@ const UCU = {
 };
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export default function Login() {
+export default function Login({ setToken }) {
   const navigate = useNavigate();
   const { toast, showToast, hideToast } = useToast();
 
@@ -63,6 +63,7 @@ export default function Login() {
       const { token } = await login({ username, password });
       showToast(`Welcome back, ${username}!`, 'success', 'Login Successful');
       localStorage.setItem('token', token);   // persist token for future requests
+      if (setToken) setToken(token);           // update React state so ProtectedRoute sees it
       setTimeout(() => navigate('/dashboard'), 900);
     } catch (err) {
       setError(err.message || 'Login failed. Please try again.');

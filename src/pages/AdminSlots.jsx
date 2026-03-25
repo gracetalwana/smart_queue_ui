@@ -159,7 +159,7 @@ export default function AdminSlots({ token }) {
                 </DialogActions>
             </Dialog>
 
-            <Toast open={toast.open} message={toast.message} severity={toast.severity} onClose={hideToast} />
+            <Toast toast={toast} onClose={hideToast} />
         </Box>
     );
 }
