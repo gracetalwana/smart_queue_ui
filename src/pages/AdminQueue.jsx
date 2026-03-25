@@ -101,7 +101,7 @@ export default function AdminQueue({ token }) {
                         onChange={(e) => setSelectedSlot(e.target.value)}
                     >
                         {slots.map((s) => (
-                            <MenuItem key={s.id} value={s.id}>
+                            <MenuItem key={s.slot_id} value={s.slot_id}>
                                 {s.slot_date} &nbsp; {s.start_time?.slice(0, 5)}–{s.end_time?.slice(0, 5)}
                             </MenuItem>
                         ))}
@@ -132,7 +132,7 @@ export default function AdminQueue({ token }) {
                         </TableHead>
                         <TableBody>
                             {appointments.map((a, i) => (
-                                <TableRow key={a.id} hover>
+                                <TableRow key={a.appointment_id} hover>
                                     <TableCell>{i + 1}</TableCell>
                                     <TableCell><strong>{a.queue_number}</strong></TableCell>
                                     <TableCell>{a.full_name || a.username}</TableCell>
@@ -147,10 +147,10 @@ export default function AdminQueue({ token }) {
                                                     <IconButton
                                                         size="small"
                                                         color="info"
-                                                        disabled={acting === a.id}
-                                                        onClick={() => act(a.id, markServing)}
+                                                        disabled={acting === a.appointment_id}
+                                                        onClick={() => act(a.appointment_id, markServing)}
                                                     >
-                                                        {acting === a.id ? <CircularProgress size={14} /> : <PlayArrowIcon fontSize="small" />}
+                                                        {acting === a.appointment_id ? <CircularProgress size={14} /> : <PlayArrowIcon fontSize="small" />}
                                                     </IconButton>
                                                 </span>
                                             </Tooltip>
@@ -162,10 +162,10 @@ export default function AdminQueue({ token }) {
                                                         <IconButton
                                                             size="small"
                                                             color="success"
-                                                            disabled={acting === a.id}
-                                                            onClick={() => act(a.id, markServed)}
+                                                            disabled={acting === a.appointment_id}
+                                                            onClick={() => act(a.appointment_id, markServed)}
                                                         >
-                                                            {acting === a.id ? <CircularProgress size={14} /> : <CheckIcon fontSize="small" />}
+                                                            {acting === a.appointment_id ? <CircularProgress size={14} /> : <CheckIcon fontSize="small" />}
                                                         </IconButton>
                                                     </span>
                                                 </Tooltip>
@@ -174,8 +174,8 @@ export default function AdminQueue({ token }) {
                                                         <IconButton
                                                             size="small"
                                                             color="error"
-                                                            disabled={acting === a.id}
-                                                            onClick={() => act(a.id, markNoShow)}
+                                                            disabled={acting === a.appointment_id}
+                                                            onClick={() => act(a.appointment_id, markNoShow)}
                                                         >
                                                             <PersonOffIcon fontSize="small" />
                                                         </IconButton>

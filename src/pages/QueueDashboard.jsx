@@ -117,10 +117,10 @@ export default function QueueDashboard({ token, user }) {
                                 color="error"
                                 size="small"
                                 sx={{ mt: 2 }}
-                                disabled={cancelling === active.id}
-                                onClick={() => handleCancel(active.id)}
+                                disabled={cancelling === active.appointment_id}
+                                onClick={() => handleCancel(active.appointment_id)}
                             >
-                                {cancelling === active.id ? 'Cancelling…' : 'Cancel Appointment'}
+                                {cancelling === active.appointment_id ? 'Cancelling…' : 'Cancel Appointment'}
                             </Button>
                         )}
                     </CardContent>
@@ -140,7 +140,7 @@ export default function QueueDashboard({ token, user }) {
             ) : (
                 <List disablePadding>
                     {appointments.map((a, i) => (
-                        <Box key={a.id}>
+                        <Box key={a.appointment_id}>
                             {i > 0 && <Divider />}
                             <ListItem
                                 secondaryAction={

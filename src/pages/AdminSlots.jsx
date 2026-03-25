@@ -39,12 +39,12 @@ export default function AdminSlots({ token }) {
 
     const openCreate = () => { setEditId(null); setForm(emptyForm); setOpen(true); };
     const openEdit = (s) => {
-        setEditId(s.id);
+        setEditId(s.slot_id);
         setForm({
             slot_date: s.slot_date,
             start_time: s.start_time.slice(0, 5),
             end_time: s.end_time.slice(0, 5),
-            capacity: s.capacity,
+            capacity: s.max_capacity,
             description: s.description || '',
         });
         setOpen(true);
@@ -53,11 +53,14 @@ export default function AdminSlots({ token }) {
     const handleSave = async () => {
         setSaving(true);
         try {
+            // Map frontend form field 'capacity' to backend 'max_capacity'
+            const payload = { ...form, max_capacity: Number(form.capacity) };
+            delete payload.capacity;
             if (editId) {
-                await updateSlot(editId, form, token);
+                await updateSlot(editId, payload, token);
                 showToast('Slot updated.', 'success');
             } else {
-                await createSlot(form, token);
+                await createSlot(payload, token);
                 showToast('Slot created.', 'success');
             }
             setOpen(false);
@@ -108,10 +111,10 @@ export default function AdminSlots({ token }) {
                     </TableHead>
                     <TableBody>
                         {slots.map((s) => (
-                            <TableRow key={s.id} hover>
+                            <TableRow key={s.slot_id} hover>
                                 <TableCell>{s.slot_date}</TableCell>
                                 <TableCell>{s.start_time?.slice(0, 5)} – {s.end_time?.slice(0, 5)}</TableCell>
-                                <TableCell>{s.capacity}</TableCell>
+                                <TableCell>{s.max_capacity}</TableCell>
                                 <TableCell>{s.booked_count}</TableCell>
                                 <TableCell>
                                     <Chip

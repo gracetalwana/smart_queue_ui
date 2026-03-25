@@ -145,7 +145,7 @@ export default function ModernLayout({ children, user }) {
           variant="caption"
           sx={{ color: 'rgba(255,255,255,0.45)', fontSize: 10, display: 'block', mt: 0.5 }}
         >
-          Learning Management System
+          Smart Queuing System
         </Typography>
       </Box>
 
@@ -318,7 +318,7 @@ export default function ModernLayout({ children, user }) {
             opacity: 0.7,
           }}
         >
-          © {new Date().getFullYear()} Uganda Christian University — Learning Management System
+          © {new Date().getFullYear()} Uganda Christian University — Smart Queuing System
         </Box>
       </Box>
     </Box>

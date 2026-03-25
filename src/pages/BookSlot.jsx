@@ -48,7 +48,7 @@ export default function BookSlot({ token }) {
         }
     };
 
-    const remaining = (s) => s.capacity - (s.booked_count || 0);
+    const remaining = (s) => s.max_capacity - (s.booked_count || 0);
 
     return (
         <Box>
@@ -79,7 +79,7 @@ export default function BookSlot({ token }) {
                         const left = remaining(slot);
                         const full = left <= 0;
                         return (
-                            <Grid item xs={12} sm={6} md={4} key={slot.id}>
+                            <Grid item xs={12} sm={6} md={4} key={slot.slot_id}>
                                 <Card variant="outlined" sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                                     <CardContent sx={{ flexGrow: 1 }}>
                                         <Box display="flex" alignItems="center" gap={1} mb={1}>
@@ -95,7 +95,7 @@ export default function BookSlot({ token }) {
                                         <Box display="flex" alignItems="center" gap={1}>
                                             <PeopleIcon fontSize="small" />
                                             <Typography variant="body2">
-                                                {left} / {slot.capacity} spots left
+                                                {left} / {slot.max_capacity} spots left
                                             </Typography>
                                         </Box>
                                         {slot.description && (
@@ -111,11 +111,11 @@ export default function BookSlot({ token }) {
                                             <Button
                                                 variant="contained"
                                                 size="small"
-                                                disabled={booking === slot.id}
-                                                onClick={() => handleBook(slot.id)}
-                                                startIcon={booking === slot.id ? <CircularProgress size={14} /> : null}
+                                                disabled={booking === slot.slot_id}
+                                                onClick={() => handleBook(slot.slot_id)}
+                                                startIcon={booking === slot.slot_id ? <CircularProgress size={14} /> : null}
                                             >
-                                                {booking === slot.id ? 'Booking…' : 'Book Now'}
+                                                {booking === slot.slot_id ? 'Booking…' : 'Book Now'}
                                             </Button>
                                         )}
                                     </CardActions>
