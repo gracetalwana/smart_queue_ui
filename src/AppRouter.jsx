@@ -23,7 +23,6 @@ import ModernLayout from './layouts/ModernLayout';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
-import Chapters from './pages/Chapters';
 import Users from './pages/Users';
 import Reports from './pages/Reports';
 import BookSlot from './pages/BookSlot';
@@ -91,17 +90,6 @@ export default function AppRouter() {
             <ProtectedRoute token={token}>
               <ModernLayout onLogout={handleLogout} user={user}>
                 <Dashboard token={token} user={user} />
-              </ModernLayout>
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/chapters"
-          element={
-            <ProtectedRoute token={token}>
-              <ModernLayout onLogout={handleLogout} user={user}>
-                <Chapters token={token} />
               </ModernLayout>
             </ProtectedRoute>
           }

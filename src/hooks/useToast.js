@@ -9,7 +9,7 @@
  * Usage:
  *   const { toast, showToast, hideToast } = useToast();
  *   <Toast toast={toast} onClose={hideToast} />
- *   showToast('Chapter created!', 'success');
+ *   showToast('Appointment booked!', 'success');
  */
 
 import { useState, useCallback } from 'react';

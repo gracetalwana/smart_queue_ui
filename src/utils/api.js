@@ -66,57 +66,6 @@ export const register = (username, password, email) =>
     body: JSON.stringify({ username, password, email }),
   });
 
-// ── Chapters ──────────────────────────────────────────────────────────────────
-
-/** GET /api/chapters – Public; returns array of chapters */
-export const getChapters = () =>
-  request(`${API_BASE}/chapters`);
-
-/** GET /api/chapters/stats – Returns aggregate stats (requires auth) */
-export const getChapterStats = (token) =>
-  request(`${API_BASE}/chapters/stats`, { headers: authHeaders(token) });
-
-/** GET /api/chapters/:id – Public; returns a single chapter */
-export const getChapter = (id) =>
-  request(`${API_BASE}/chapters/${id}`);
-
-/** POST /api/chapters – Protected; creates a new chapter */
-export const createChapter = (chapter, token) =>
-  request(`${API_BASE}/chapters`, {
-    method: 'POST',
-    headers: authHeaders(token),
-    body: JSON.stringify(chapter),
-  });
-
-/** PUT /api/chapters/:id – Protected; updates name/description */
-export const updateChapter = (id, chapter, token) =>
-  request(`${API_BASE}/chapters/${id}`, {
-    method: 'PUT',
-    headers: authHeaders(token),
-    body: JSON.stringify(chapter),
-  });
-
-/** DELETE /api/chapters/:id – Protected; removes a chapter */
-export const deleteChapter = (id, token) =>
-  request(`${API_BASE}/chapters/${id}`, {
-    method: 'DELETE',
-    headers: authHeaders(token),
-  });
-
-/** GET /api/chapters/:id/users – Protected; returns enrolled users */
-export const getUsersInChapter = (chapterId, token) =>
-  request(`${API_BASE}/chapters/${chapterId}/users`, {
-    headers: authHeaders(token),
-  });
-
-/** POST /api/chapters/add-user – Protected; enrols a user */
-export const addUserToChapter = (userId, chapterId, token) =>
-  request(`${API_BASE}/chapters/add-user`, {
-    method: 'POST',
-    headers: authHeaders(token),
-    body: JSON.stringify({ userId, chapterId }),
-  });
-
 // ── Users ─────────────────────────────────────────────────────────────────────
 
 /** GET /api/users – Protected; returns all users */
@@ -179,6 +128,10 @@ export const updateSlot = (id, slot, token) =>
   });
 
 // ── Appointments ──────────────────────────────────────────────────────────────
+
+/** GET /api/appointments/stats – Admin: aggregate queue statistics */
+export const getQueueStats = (token) =>
+  request(`${API_BASE}/appointments/stats`, { headers: authHeaders(token) });
 
 /** POST /api/appointments – Student books a slot */
 export const bookAppointment = (payload, token) =>

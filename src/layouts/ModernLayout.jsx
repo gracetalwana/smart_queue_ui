@@ -27,7 +27,6 @@ import {
   IconButton, Breadcrumbs, Link, Chip,
 } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import MenuBookIcon from '@mui/icons-material/MenuBook';
 import PeopleIcon from '@mui/icons-material/People';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -57,7 +56,6 @@ const NAV_ITEMS = [
   { path: '/dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
   { path: '/book-slot', label: 'Book Slot', icon: <EventAvailableIcon />, role: 'STUDENT' },
   { path: '/my-queue', label: 'My Queue', icon: <QueueIcon />, role: 'STUDENT' },
-  { path: '/chapters', label: 'Chapters', icon: <MenuBookIcon /> },
   { path: '/users', label: 'Users', icon: <PeopleIcon />, role: 'ADMIN' },
   { path: '/reports', label: 'Reports', icon: <AssessmentIcon /> },
   { path: '/admin/slots', label: 'Manage Slots', icon: <ViewListIcon />, role: 'ADMIN' },
@@ -67,7 +65,6 @@ const NAV_ITEMS = [
 // Map path → human-readable breadcrumb label
 const PAGE_LABELS = {
   '/dashboard': 'Dashboard',
-  '/chapters': 'Chapters',
   '/users': 'Users',
   '/reports': 'Reports',
   '/book-slot': 'Book Slot',

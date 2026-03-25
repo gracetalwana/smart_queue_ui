@@ -8,10 +8,9 @@ export default function MainLayout({ children, onLogout }) {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Express MySQL App
+            Smart Queuing System
           </Typography>
           <Button color="inherit" component={Link} to="/dashboard">Dashboard</Button>
-          <Button color="inherit" component={Link} to="/chapters">Chapters</Button>
           <Button color="inherit" component={Link} to="/users">Users</Button>
           <Button color="inherit" onClick={() => { onLogout(); navigate('/login'); }}>Logout</Button>
         </Toolbar>

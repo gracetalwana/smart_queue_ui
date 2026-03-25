@@ -14,7 +14,7 @@
  *   import { useToast } from '../hooks/useToast';
  *
  *   const { toast, showToast, hideToast } = useToast();
- *   showToast('Chapter saved!', 'success', 'Done');
+ *   showToast('Appointment booked!', 'success', 'Done');
  *   <Toast toast={toast} onClose={hideToast} />
  */
 
@@ -46,6 +46,7 @@ const ACCENTS = {
 };
 
 export default function Toast({ toast, onClose }) {
+    if (!toast) return null;
     const { open, message, severity = 'success', title } = toast;
 
     return (
