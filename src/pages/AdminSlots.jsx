@@ -10,6 +10,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import { getAllSlots, createSlot, updateSlot } from '../utils/api';
+import { fmtTime, fmtDate } from '../utils/format';
 import { useToast } from '../hooks/useToast';
 import Toast from '../components/Toast';
 
@@ -112,8 +113,8 @@ export default function AdminSlots({ token }) {
                     <TableBody>
                         {slots.map((s) => (
                             <TableRow key={s.slot_id} hover>
-                                <TableCell>{s.slot_date}</TableCell>
-                                <TableCell>{s.start_time?.slice(0, 5)} – {s.end_time?.slice(0, 5)}</TableCell>
+                                <TableCell>{fmtDate(s.slot_date)}</TableCell>
+                                <TableCell>{fmtTime(s.start_time)} – {fmtTime(s.end_time)}</TableCell>
                                 <TableCell>{s.max_capacity}</TableCell>
                                 <TableCell>{s.booked_count}</TableCell>
                                 <TableCell>

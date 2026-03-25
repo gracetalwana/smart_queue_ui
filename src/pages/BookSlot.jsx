@@ -10,6 +10,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PeopleIcon from '@mui/icons-material/People';
 import { getSlots, bookAppointment } from '../utils/api';
+import { fmtTime, fmtDate } from '../utils/format';
 import { useToast } from '../hooks/useToast';
 import Toast from '../components/Toast';
 
@@ -84,12 +85,12 @@ export default function BookSlot({ token }) {
                                     <CardContent sx={{ flexGrow: 1 }}>
                                         <Box display="flex" alignItems="center" gap={1} mb={1}>
                                             <CalendarMonthIcon fontSize="small" color="primary" />
-                                            <Typography fontWeight={600}>{slot.slot_date}</Typography>
+                                            <Typography fontWeight={600}>{fmtDate(slot.slot_date)}</Typography>
                                         </Box>
                                         <Box display="flex" alignItems="center" gap={1} mb={1}>
                                             <AccessTimeIcon fontSize="small" />
                                             <Typography variant="body2">
-                                                {slot.start_time} – {slot.end_time}
+                                                {fmtTime(slot.start_time)} – {fmtTime(slot.end_time)}
                                             </Typography>
                                         </Box>
                                         <Box display="flex" alignItems="center" gap={1}>

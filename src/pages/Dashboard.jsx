@@ -13,6 +13,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import Chart from 'react-apexcharts';
 import { getQueueStats } from '../utils/api';
+import { fmtTime, fmtDate } from '../utils/format';
 
 const UCU = { maroon: '#7B1C1C', gold: '#C9A84C', dark: '#1A1A2E', light: '#F5F0EB' };
 
@@ -237,7 +238,7 @@ export default function Dashboard() {
                   <Box sx={{ flex: 1, minWidth: 0 }}>
                     <Typography variant="body2" fontWeight={600} noWrap>{appt.full_name || appt.username || 'Student'}</Typography>
                     <Typography variant="caption" color="text.secondary">
-                      {new Date(appt.slot_date).toLocaleDateString()} &middot; {appt.start_time}&ndash;{appt.end_time}
+                      {fmtDate(appt.slot_date)} &middot; {fmtTime(appt.start_time)}&ndash;{fmtTime(appt.end_time)}
                     </Typography>
                   </Box>
                   <Chip label={appt.reason || 'General'} size="small" sx={{ bgcolor: '#F5F0EB', fontWeight: 600, fontSize: 11 }} />

@@ -20,6 +20,7 @@ import {
     getAllSlots, getAppointmentsBySlot,
     markServing, markServed, markNoShow,
 } from '../utils/api';
+import { fmtTime, fmtDate } from '../utils/format';
 import { useToast } from '../hooks/useToast';
 import Toast from '../components/Toast';
 
@@ -102,7 +103,7 @@ export default function AdminQueue({ token }) {
                     >
                         {slots.map((s) => (
                             <MenuItem key={s.slot_id} value={s.slot_id}>
-                                {s.slot_date} &nbsp; {s.start_time?.slice(0, 5)}–{s.end_time?.slice(0, 5)}
+                                {fmtDate(s.slot_date)} &nbsp; {fmtTime(s.start_time)}–{fmtTime(s.end_time)}
                             </MenuItem>
                         ))}
                     </Select>

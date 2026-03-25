@@ -8,6 +8,7 @@
 
 import { useEffect, useState } from 'react';
 import { getUsers, updateUser, deleteUser } from '../utils/api';
+import { fmtDate } from '../utils/format';
 import { useToast } from '../hooks/useToast';
 import Toast from '../components/Toast';
 import {
@@ -192,7 +193,7 @@ export default function Users({ token }) {
                       </Typography>
                       <Typography variant="body2" color="text.secondary" noWrap>{u.email}</Typography>
                       <Chip
-                        label={`Joined ${new Date(u.created_at).toLocaleDateString()}`}
+                        label={`Joined ${fmtDate(u.created_at)}`}
                         size="small"
                         sx={{ mt: 0.5, fontSize: 10, bgcolor: UCU.goldLight, color: UCU.maroon, fontWeight: 600 }}
                       />
@@ -258,7 +259,7 @@ export default function Users({ token }) {
                   <TableCell>{u.email}</TableCell>
                   <TableCell>
                     <Chip
-                      label={new Date(u.created_at).toLocaleDateString()}
+                      label={fmtDate(u.created_at)}
                       size="small"
                       sx={{ bgcolor: UCU.goldLight, color: UCU.maroon, fontWeight: 600, fontSize: 11 }}
                     />

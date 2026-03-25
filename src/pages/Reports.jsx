@@ -6,6 +6,7 @@
  */
 import { useEffect, useState } from 'react';
 import { getQueueStats } from '../utils/api';
+import { fmtDateTime } from '../utils/format';
 import {
     Box, Typography, Stack, Paper, Grid, Chip, CircularProgress,
     Alert, Divider, Table, TableHead, TableRow, TableCell, TableBody,
@@ -331,7 +332,7 @@ export default function Reports({ token }) {
                                                 </TableCell>
                                                 <TableCell sx={{ color: 'text.secondary', fontSize: 12, whiteSpace: 'nowrap' }}>
                                                     {appt.booked_at
-                                                        ? new Date(appt.booked_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+                                                        ? fmtDateTime(appt.booked_at)
                                                         : '—'}
                                                 </TableCell>
                                             </TableRow>

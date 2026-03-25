@@ -10,6 +10,7 @@ import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import useSocket from '../hooks/useSocket';
 import { getMyAppointments, cancelAppointment } from '../utils/api';
+import { fmtTime, fmtDate } from '../utils/format';
 import { useToast } from '../hooks/useToast';
 import Toast from '../components/Toast';
 
@@ -99,7 +100,7 @@ export default function QueueDashboard({ token, user }) {
                         </Box>
 
                         <Typography variant="body2" mt={2}>
-                            Slot: {active.slot_date} &nbsp;|&nbsp; {active.start_time} – {active.end_time}
+                            Slot: {fmtDate(active.slot_date)} &nbsp;|&nbsp; {fmtTime(active.start_time)} – {fmtTime(active.end_time)}
                         </Typography>
 
                         {active.estimated_wait_minutes !== undefined && (
@@ -152,8 +153,8 @@ export default function QueueDashboard({ token, user }) {
                                 }
                             >
                                 <ListItemText
-                                    primary={`${a.queue_number} — ${a.slot_date}`}
-                                    secondary={`${a.start_time} – ${a.end_time}  ·  ${a.reason}`}
+                                    primary={`${a.queue_number} — ${fmtDate(a.slot_date)}`}
+                                    secondary={`${fmtTime(a.start_time)} – ${fmtTime(a.end_time)}  ·  ${a.reason}`}
                                 />
                             </ListItem>
                         </Box>
