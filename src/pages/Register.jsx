@@ -1,40 +1,21 @@
 /**
- * pages/Register.jsx — UCU Registration Page
- *
- * Same split-panel layout as Login.jsx:
- *   Left  → UCU branding panel (maroon)
- *   Right → Registration form (white)
- *
- * KEY CONCEPTS:
- *  - Client-side password confirmation check before hitting the API
- *  - success state shows a green Alert, then redirects to /login after 1.5s
- *  - error state shows a red Alert for any API or validation failure
+ * pages/Register.jsx — Modern Registration Page
  */
 
 import { useState } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import {
   Box, Button, TextField, Typography, Alert, CircularProgress,
-  Stack, Divider, Link,
+  Divider, Link, Paper,
 } from '@mui/material';
-import PersonIcon from '@mui/icons-material/Person';
-import EmailIcon from '@mui/icons-material/Email';
-import LockIcon from '@mui/icons-material/Lock';
-import HowToRegIcon from '@mui/icons-material/HowToReg';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { register } from '../utils/api';
-import ucuLogo from '../assets/uculogotousenobg.png';
+import { brand } from '../theme';
 import { useToast } from '../hooks/useToast';
 import Toast from '../components/Toast';
 
-const UCU = {
-  maroon: '#7B1C1C',
-  maroonDark: '#5C1010',
-  gold: '#C9A227',
-  goldLight: '#F5E6B0',
-  white: '#FFFFFF',
-};
-
-// ── Component ─────────────────────────────────────────────────────────────────
 export default function Register() {
   const navigate = useNavigate();
   const { toast, showToast, hideToast } = useToast();
@@ -48,31 +29,26 @@ export default function Register() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // ── Submit handler ──────────────────────────────────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
-
+    setError(''); setSuccess('');
     if (!username.trim() || !email.trim() || !password.trim()) {
       setError('All fields are required.');
       return;
     }
-    // Client-side check — server also validates, but this gives instant feedback
     if (password !== confirm) {
       setError('Passwords do not match.');
       return;
     }
-
     setLoading(true);
     try {
       const data = await register(username, password, email);
-      showToast(data.message || 'Account created! Redirecting to login…', 'success', 'Welcome to UCU!');
+      showToast(data.message || 'Account created! Redirecting…', 'success', 'Welcome!');
       setSuccess(data.message || 'Account created! Redirecting to login…');
       setTimeout(() => navigate('/login'), 1800);
     } catch (err) {
-      setError(err.message || 'Registration failed. Please try again.');
-      showToast(err.message || 'Registration failed.', 'error', 'Registration Failed');
+      setError(err.message || 'Registration failed.');
+      showToast(err.message || 'Registration failed.', 'error');
     } finally {
       setLoading(false);
     }
@@ -80,180 +56,98 @@ export default function Register() {
 
   const passwordMismatch = !!confirm && password !== confirm;
 
-  // ── Render ──────────────────────────────────────────────────────────────────
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: `linear-gradient(135deg, ${brand.sidebarBg} 0%, #1E293B 50%, ${brand.primaryDark} 100%)`,
+        p: 2, position: 'relative', overflow: 'hidden',
+      }}
+    >
+      <Box sx={{ position: 'absolute', top: -100, left: -100, width: 400, height: 400, borderRadius: '50%', background: `radial-gradient(circle, ${brand.accent}12 0%, transparent 70%)` }} />
+      <Box sx={{ position: 'absolute', bottom: -80, right: -80, width: 300, height: 300, borderRadius: '50%', background: `radial-gradient(circle, ${brand.primary}10 0%, transparent 70%)` }} />
 
-      {/* ── Left branding panel ── */}
-      <Box
+      <Paper
+        elevation={0}
         sx={{
-          display: { xs: 'none', md: 'flex' },
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: '45%',
-          background: `linear-gradient(160deg, ${UCU.maroon} 0%, ${UCU.maroonDark} 100%)`,
-          px: 6,
-          py: 8,
-          position: 'relative',
-          overflow: 'hidden',
+          width: '100%', maxWidth: 440,
+          p: { xs: 3, sm: 5 }, borderRadius: 4,
+          border: '1px solid rgba(255,255,255,0.1)',
+          bgcolor: 'rgba(255,255,255,0.97)',
+          backdropFilter: 'blur(20px)',
+          position: 'relative', zIndex: 1,
         }}
       >
-        {/* Decorative circles */}
-        <Box sx={{ position: 'absolute', width: 300, height: 300, borderRadius: '50%', border: `60px solid rgba(201,162,39,0.08)`, top: -80, left: -80 }} />
-        <Box sx={{ position: 'absolute', width: 200, height: 200, borderRadius: '50%', border: `40px solid rgba(201,162,39,0.06)`, bottom: -50, right: -50 }} />
-
-        {/* UCU Logo */}
-        <Box
-          sx={{
-            width: 130, height: 130,
-            borderRadius: '50%',
-            bgcolor: UCU.white,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            mb: 3,
-            boxShadow: '0 8px 30px rgba(0,0,0,0.35)',
-            p: 1.5,
-          }}
-        >
+        <Box sx={{ textAlign: 'center', mb: 3 }}>
           <Box
-            component="img"
-            src={ucuLogo}
-            alt="UCU Logo"
-            sx={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            sx={{
+              width: 56, height: 56, borderRadius: 3, mx: 'auto', mb: 2,
+              background: `linear-gradient(135deg, ${brand.accent} 0%, ${brand.primary} 100%)`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}
+          >
+            <Typography sx={{ color: '#fff', fontWeight: 900, fontSize: 20 }}>SQ</Typography>
+          </Box>
+          <Typography variant="h5" fontWeight={800} color={brand.textPrimary}>
+            Create Account
+          </Typography>
+          <Typography variant="body2" color={brand.textSecondary} mt={0.5}>
+            Join Smart Queue today
+          </Typography>
+        </Box>
+
+        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+        {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
+
+        <Box component="form" onSubmit={handleSubmit} noValidate>
+          <TextField
+            label="Username" fullWidth margin="normal"
+            value={username} onChange={e => setUsername(e.target.value)}
+            required autoFocus
+            slotProps={{ input: { startAdornment: <PersonOutlineIcon sx={{ mr: 1, color: brand.textSecondary, fontSize: 20 }} /> } }}
           />
+          <TextField
+            label="Email" type="email" fullWidth margin="normal"
+            value={email} onChange={e => setEmail(e.target.value)} required
+            slotProps={{ input: { startAdornment: <EmailOutlinedIcon sx={{ mr: 1, color: brand.textSecondary, fontSize: 20 }} /> } }}
+          />
+          <TextField
+            label="Password" type="password" fullWidth margin="normal"
+            value={password} onChange={e => setPassword(e.target.value)} required
+            slotProps={{ input: { startAdornment: <LockOutlinedIcon sx={{ mr: 1, color: brand.textSecondary, fontSize: 20 }} /> } }}
+          />
+          <TextField
+            label="Confirm Password" type="password" fullWidth margin="normal"
+            value={confirm} onChange={e => setConfirm(e.target.value)} required
+            error={passwordMismatch}
+            helperText={passwordMismatch ? 'Passwords do not match' : ''}
+            slotProps={{ input: { startAdornment: <LockOutlinedIcon sx={{ mr: 1, color: passwordMismatch ? brand.error : brand.textSecondary, fontSize: 20 }} /> } }}
+          />
+
+          <Button
+            type="submit" variant="contained" fullWidth
+            disabled={loading || !!success}
+            sx={{ mt: 3, py: 1.4, fontSize: 15, fontWeight: 700 }}
+          >
+            {loading ? <CircularProgress size={22} sx={{ color: '#fff' }} /> : 'Create Account'}
+          </Button>
         </Box>
 
-        <Typography variant="h4" sx={{ color: UCU.white, fontWeight: 800, textAlign: 'center', lineHeight: 1.2, mb: 1 }}>
-          Uganda Christian University
+        <Divider sx={{ my: 3 }} />
+
+        <Typography variant="body2" textAlign="center" color="text.secondary">
+          Already have an account?{' '}
+          <Link
+            component={RouterLink} to="/login"
+            sx={{ color: brand.primary, fontWeight: 700, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+          >
+            Sign in here
+          </Link>
         </Typography>
+      </Paper>
 
-        <Box sx={{ width: 60, height: 3, bgcolor: UCU.gold, borderRadius: 2, my: 2 }} />
-
-        <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.75)', textAlign: 'center', maxWidth: 300, lineHeight: 1.7 }}>
-          Create your account and join the UCU learning community today.
-        </Typography>
-
-        <Stack direction="row" spacing={1} mt={4} alignItems="center">
-          <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: UCU.gold }} />
-          <Typography variant="caption" sx={{ color: UCU.goldLight, letterSpacing: 1.5, fontSize: 10 }}>
-            STUDENT PORTAL
-          </Typography>
-          <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: UCU.gold }} />
-        </Stack>
-      </Box>
-
-      {/* ── Right form panel ── */}
-      <Box
-        sx={{
-          flex: 1,
-          display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
-          bgcolor: '#FAFAFA',
-          px: { xs: 3, sm: 6, md: 8 },
-          py: 6,
-        }}
-      >
-        <Box sx={{ width: '100%', maxWidth: 420 }}>
-
-          {/* Mobile heading */}
-          <Box sx={{ display: { xs: 'block', md: 'none' }, textAlign: 'center', mb: 3 }}>
-            <Box
-              component="img"
-              src={ucuLogo}
-              alt="UCU Logo"
-              sx={{ width: 56, height: 56, objectFit: 'contain', mb: 0.5 }}
-            />
-            <Typography variant="h6" fontWeight={800} color={UCU.maroon}>Uganda Christian University</Typography>
-          </Box>
-
-          <Stack direction="row" alignItems="center" spacing={1.5} mb={1}>
-            <Box sx={{ p: 1, bgcolor: UCU.goldLight, borderRadius: 2 }}>
-              <HowToRegIcon sx={{ color: UCU.maroon, fontSize: 22 }} />
-            </Box>
-            <Box>
-              <Typography variant="h5" fontWeight={800} color={UCU.maroon}>Create Account</Typography>
-              <Typography variant="body2" color="text.secondary">Fill in your details to register</Typography>
-            </Box>
-          </Stack>
-
-          <Divider sx={{ my: 2.5 }} />
-
-          {error && <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }}>{error}</Alert>}
-          {success && <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }}>{success}</Alert>}
-
-          <Box component="form" onSubmit={handleSubmit} noValidate>
-            <TextField
-              label="Username"
-              fullWidth margin="normal"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              required autoFocus
-              slotProps={{ input: { startAdornment: <PersonIcon sx={{ mr: 1, color: UCU.maroon, fontSize: 20 }} /> } }}
-            />
-            <TextField
-              label="Email"
-              type="email"
-              fullWidth margin="normal"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              slotProps={{ input: { startAdornment: <EmailIcon sx={{ mr: 1, color: UCU.maroon, fontSize: 20 }} /> } }}
-            />
-            <TextField
-              label="Password"
-              type="password"
-              fullWidth margin="normal"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              slotProps={{ input: { startAdornment: <LockIcon sx={{ mr: 1, color: UCU.maroon, fontSize: 20 }} /> } }}
-            />
-            <TextField
-              label="Confirm Password"
-              type="password"
-              fullWidth margin="normal"
-              value={confirm}
-              onChange={e => setConfirm(e.target.value)}
-              required
-              error={passwordMismatch}
-              helperText={passwordMismatch ? 'Passwords do not match' : ''}
-              slotProps={{ input: { startAdornment: <LockIcon sx={{ mr: 1, color: passwordMismatch ? 'error.main' : UCU.maroon, fontSize: 20 }} /> } }}
-            />
-
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-              disabled={loading || !!success}
-              sx={{
-                mt: 3, py: 1.4, fontWeight: 700, fontSize: 15,
-                bgcolor: UCU.maroon, '&:hover': { bgcolor: UCU.maroonDark },
-                borderRadius: 2,
-              }}
-            >
-              {loading
-                ? <CircularProgress size={22} sx={{ color: '#fff' }} />
-                : 'Create Account'
-              }
-            </Button>
-          </Box>
-
-          <Typography variant="body2" textAlign="center" mt={3} color="text.secondary">
-            Already have an account?{' '}
-            <Link
-              component={RouterLink}
-              to="/login"
-              sx={{ color: UCU.maroon, fontWeight: 700, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
-            >
-              Sign in here
-            </Link>
-          </Typography>
-        </Box>
-      </Box>
-
-      {/* ── Toast Notifications ── */}
       <Toast toast={toast} onClose={hideToast} />
     </Box>
   );
 }
-
-

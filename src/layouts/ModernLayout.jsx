@@ -1,30 +1,16 @@
 /**
- * layouts/ModernLayout.jsx — UCU-Branded App Shell
+ * layouts/ModernLayout.jsx — Modern App Shell
  *
- * STRUCTURE:
- *   ┌────────────────────────────────────────────────────┐
- *   │  Sidebar (permanent Drawer, 240px, UCU Maroon)     │
- *   │    UCU crest + university name                     │
- *   │    Navigation items — active = gold left border    │
- *   │    User avatar + name + logout at bottom           │
- *   ├────────────────────────────────────────────────────┤
- *   │  AppBar (white, 3px maroon bottom border)          │
- *   │    Breadcrumb: Home › Current Page                 │
- *   │    Logged-in user chip                             │
- *   ├────────────────────────────────────────────────────┤
- *   │  Page content — {children}                         │
- *   └────────────────────────────────────────────────────┘
- *
- * PROPS:
- *   children  – the page component rendered in the content area
- *   user      – decoded JWT payload: { id, username, email, iat, exp }
+ * Clean sidebar with dark slate background, teal accents, responsive drawer.
+ * Top bar with breadcrumbs and user chip. Sticky footer.
  */
 
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Box, Drawer, AppBar, Toolbar, List, ListItemButton, ListItemIcon,
   ListItemText, Typography, Avatar, Divider, Stack, Tooltip,
-  IconButton, Breadcrumbs, Link, Chip,
+  IconButton, Breadcrumbs, Link, Chip, useMediaQuery, useTheme,
 } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
@@ -35,23 +21,12 @@ import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import QueueIcon from '@mui/icons-material/Queue';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import ucuLogo from '../assets/uculogotousenobg.png';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
+import { brand } from '../theme';
 
-// ── Constants ─────────────────────────────────────────────────────────────────
-const DRAWER_WIDTH = 240;
+const DRAWER_WIDTH = 260;
 
-// UCU brand colours — keep in sync with main.jsx ucuTheme
-const UCU = {
-  maroon: '#7B1C1C',
-  maroonDark: '#5C1010',
-  gold: '#C9A227',
-  goldLight: '#F5E6B0',
-  white: '#FFFFFF',
-  offWhite: '#F9F5F0',
-};
-
-// Sidebar navigation items
-// role: undefined = all roles; 'ADMIN'/'SUPER_ADMIN' = admin-only; 'STUDENT' = student-only
 const NAV_ITEMS = [
   { path: '/dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
   { path: '/book-slot', label: 'Book Slot', icon: <EventAvailableIcon />, role: 'STUDENT' },
@@ -62,7 +37,6 @@ const NAV_ITEMS = [
   { path: '/admin/queue', label: 'Queue Console', icon: <ManageAccountsIcon />, role: 'ADMIN' },
 ];
 
-// Map path → human-readable breadcrumb label
 const PAGE_LABELS = {
   '/dashboard': 'Dashboard',
   '/users': 'Users',
@@ -73,15 +47,16 @@ const PAGE_LABELS = {
   '/admin/queue': 'Queue Console',
 };
 
-// Pick an avatar background from a small palette, based on first character of username
-const AVATAR_COLORS = [UCU.maroon, '#7B3F00', '#1A4A7B', '#1A5C2E', '#4A1A7B'];
+const AVATAR_COLORS = ['#0EA5E9', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444'];
 const avatarBg = (name = '') =>
   AVATAR_COLORS[(name.codePointAt(0) ?? 0) % AVATAR_COLORS.length];
 
-// ── Component ─────────────────────────────────────────────────────────────────
 export default function ModernLayout({ children, user }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const muiTheme = useTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down('md'));
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const username = user?.username ?? 'User';
   const pageLabel = PAGE_LABELS[location.pathname] ?? 'Page';
@@ -91,64 +66,57 @@ export default function ModernLayout({ children, user }) {
     navigate('/login');
   };
 
-  // ── Sidebar contents ────────────────────────────────────────────────────────
+  const handleNav = (path) => {
+    navigate(path);
+    if (isMobile) setMobileOpen(false);
+  };
+
   const drawer = (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        bgcolor: UCU.maroon,
-        color: UCU.white,
+        display: 'flex', flexDirection: 'column', height: '100%',
+        bgcolor: brand.sidebarBg, color: '#fff',
       }}
     >
-      {/* UCU Branding header */}
-      <Box sx={{ px: 2.5, pt: 3, pb: 2 }}>
-        <Stack direction="row" alignItems="center" spacing={1.5} mb={0.5}>
+      {/* Brand header */}
+      <Box sx={{ px: 3, pt: 3, pb: 2 }}>
+        <Stack direction="row" alignItems="center" spacing={1.5}>
           <Box
             sx={{
-              width: 42, height: 42,
-              borderRadius: '50%',
-              bgcolor: UCU.white,
+              width: 38, height: 38, borderRadius: 2.5,
+              background: `linear-gradient(135deg, ${brand.primary} 0%, ${brand.accent} 100%)`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontWeight: 900, fontSize: 16, color: '#fff',
               flexShrink: 0,
-              p: 0.4,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
             }}
           >
-            <Box
-              component="img"
-              src={ucuLogo}
-              alt="UCU Logo"
-              sx={{ width: '100%', height: '100%', objectFit: 'contain' }}
-            />
+            SQ
           </Box>
           <Box>
             <Typography
               variant="subtitle1"
-              sx={{ color: UCU.white, fontWeight: 800, lineHeight: 1.1, letterSpacing: 0.5 }}
+              sx={{ color: '#fff', fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.02em' }}
             >
-              UCU
+              Smart Queue
             </Typography>
             <Typography
               variant="caption"
-              sx={{ color: UCU.goldLight, fontSize: 9, letterSpacing: 0.6, lineHeight: 1, display: 'block' }}
+              sx={{ color: 'rgba(255,255,255,0.4)', fontSize: 10, letterSpacing: 0.5 }}
             >
-              UGANDA CHRISTIAN UNIVERSITY
+              Queuing System
             </Typography>
           </Box>
+          {isMobile && (
+            <IconButton onClick={() => setMobileOpen(false)} sx={{ ml: 'auto', color: 'rgba(255,255,255,0.5)' }}>
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          )}
         </Stack>
-        <Typography
-          variant="caption"
-          sx={{ color: 'rgba(255,255,255,0.45)', fontSize: 10, display: 'block', mt: 0.5 }}
-        >
-          Smart Queuing System
-        </Typography>
       </Box>
 
-      <Divider sx={{ borderColor: 'rgba(255,255,255,0.15)' }} />
+      <Divider sx={{ borderColor: 'rgba(255,255,255,0.08)', mx: 2 }} />
 
-      {/* Navigation list */}
+      {/* Nav list */}
       <List sx={{ px: 1.5, pt: 1.5, flexGrow: 1 }}>
         {NAV_ITEMS.filter(({ role }) => {
           if (!role) return true;
@@ -160,50 +128,65 @@ export default function ModernLayout({ children, user }) {
           return (
             <ListItemButton
               key={path}
-              onClick={() => navigate(path)}
+              onClick={() => handleNav(path)}
               sx={{
-                borderRadius: 2,
+                borderRadius: 2.5,
                 mb: 0.5,
-                px: 1.5,
-                py: 1,
-                color: active ? UCU.gold : 'rgba(255,255,255,0.75)',
-                bgcolor: active ? 'rgba(201,162,39,0.15)' : 'transparent',
-                borderLeft: active ? `3px solid ${UCU.gold}` : '3px solid transparent',
+                px: 2,
+                py: 1.2,
+                color: active ? '#fff' : 'rgba(255,255,255,0.55)',
+                bgcolor: active ? 'rgba(14,165,233,0.15)' : 'transparent',
                 '&:hover': {
-                  bgcolor: 'rgba(255,255,255,0.08)',
-                  color: UCU.white,
+                  bgcolor: active ? 'rgba(14,165,233,0.2)' : 'rgba(255,255,255,0.05)',
+                  color: '#fff',
                 },
-                transition: 'all 0.18s ease',
+                transition: 'all 0.15s ease',
               }}
             >
-              <ListItemIcon sx={{ minWidth: 38, color: 'inherit' }}>
+              <ListItemIcon
+                sx={{
+                  minWidth: 36,
+                  color: active ? brand.primary : 'rgba(255,255,255,0.4)',
+                }}
+              >
                 {icon}
               </ListItemIcon>
               <ListItemText
                 primary={
-                  <Typography sx={{ fontWeight: active ? 700 : 500, fontSize: 14, color: 'inherit' }}>
+                  <Typography sx={{ fontWeight: active ? 600 : 400, fontSize: 14, color: 'inherit' }}>
                     {label}
                   </Typography>
                 }
               />
+              {active && (
+                <Box
+                  sx={{
+                    width: 4, height: 20, borderRadius: 2,
+                    bgcolor: brand.primary, ml: 1,
+                  }}
+                />
+              )}
             </ListItemButton>
           );
         })}
       </List>
 
-      <Divider sx={{ borderColor: 'rgba(255,255,255,0.15)' }} />
+      <Divider sx={{ borderColor: 'rgba(255,255,255,0.08)', mx: 2 }} />
 
-      {/* User info + logout at bottom */}
+      {/* User card at bottom */}
       <Box sx={{ px: 2, py: 2 }}>
-        <Stack direction="row" alignItems="center" spacing={1.5}>
+        <Stack
+          direction="row" alignItems="center" spacing={1.5}
+          sx={{
+            p: 1.5, borderRadius: 2.5,
+            bgcolor: 'rgba(255,255,255,0.05)',
+          }}
+        >
           <Avatar
             sx={{
-              width: 36,
-              height: 36,
+              width: 34, height: 34,
               bgcolor: avatarBg(username),
-              border: `2px solid ${UCU.gold}`,
-              fontWeight: 700,
-              fontSize: 15,
+              fontWeight: 700, fontSize: 14,
             }}
           >
             {username[0]?.toUpperCase()}
@@ -211,19 +194,22 @@ export default function ModernLayout({ children, user }) {
           <Box sx={{ flexGrow: 1, overflow: 'hidden' }}>
             <Typography
               variant="body2"
-              sx={{ color: UCU.white, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+              sx={{ color: '#fff', fontWeight: 600, fontSize: 13, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
             >
               {username}
             </Typography>
-            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.45)', fontSize: 10 }}>
-              {user?.role ?? 'STUDENT'}
+            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.35)', fontSize: 10 }}>
+              {user?.role === 'SUPER_ADMIN' ? 'Super Admin' : user?.role === 'ADMIN' ? 'Admin' : 'Student'}
             </Typography>
           </Box>
           <Tooltip title="Logout">
             <IconButton
               size="small"
               onClick={handleLogout}
-              sx={{ color: 'rgba(255,255,255,0.55)', '&:hover': { color: UCU.gold } }}
+              sx={{
+                color: 'rgba(255,255,255,0.4)',
+                '&:hover': { color: brand.error, bgcolor: 'rgba(239,68,68,0.1)' },
+              }}
             >
               <LogoutIcon fontSize="small" />
             </IconButton>
@@ -233,73 +219,94 @@ export default function ModernLayout({ children, user }) {
     </Box>
   );
 
-  // ── Full layout shell ───────────────────────────────────────────────────────
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: UCU.offWhite }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: brand.bgDefault }}>
 
-      {/* Permanent sidebar */}
-      <Drawer
-        variant="permanent"
-        sx={{
-          width: DRAWER_WIDTH,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: DRAWER_WIDTH,
-            boxSizing: 'border-box',
-            border: 'none',
-            boxShadow: '4px 0 20px rgba(0,0,0,0.12)',
-          },
-        }}
-      >
-        {drawer}
-      </Drawer>
-
-      {/* Right side: AppBar + content */}
-      <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-
-        {/* Top AppBar */}
-        <AppBar
-          position="static"
-          elevation={0}
+      {/* Sidebar — permanent on desktop, temporary on mobile */}
+      {isMobile ? (
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={() => setMobileOpen(false)}
+          ModalProps={{ keepMounted: true }}
           sx={{
-            bgcolor: UCU.white,
-            borderBottom: `3px solid ${UCU.maroon}`,
-            color: 'text.primary',
+            '& .MuiDrawer-paper': {
+              width: DRAWER_WIDTH,
+              boxSizing: 'border-box',
+              border: 'none',
+            },
           }}
         >
-          <Toolbar sx={{ minHeight: 56 }}>
+          {drawer}
+        </Drawer>
+      ) : (
+        <Drawer
+          variant="permanent"
+          sx={{
+            width: DRAWER_WIDTH,
+            flexShrink: 0,
+            '& .MuiDrawer-paper': {
+              width: DRAWER_WIDTH,
+              boxSizing: 'border-box',
+              border: 'none',
+            },
+          }}
+        >
+          {drawer}
+        </Drawer>
+      )}
+
+      {/* Main content area */}
+      <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: '100vh' }}>
+
+        {/* Top bar */}
+        <AppBar
+          position="sticky"
+          elevation={0}
+          sx={{
+            bgcolor: '#fff',
+            borderBottom: `1px solid ${brand.border}`,
+            color: brand.textPrimary,
+          }}
+        >
+          <Toolbar sx={{ minHeight: { xs: 56, md: 64 }, gap: 1 }}>
+            {isMobile && (
+              <IconButton onClick={() => setMobileOpen(true)} sx={{ mr: 1 }}>
+                <MenuIcon />
+              </IconButton>
+            )}
             <Breadcrumbs
-              separator={<NavigateNextIcon fontSize="small" sx={{ color: UCU.maroon }} />}
+              separator={<NavigateNextIcon fontSize="small" sx={{ color: brand.textSecondary }} />}
               sx={{ flexGrow: 1 }}
             >
               <Link
                 underline="hover"
                 onClick={() => navigate('/dashboard')}
-                sx={{ cursor: 'pointer', fontSize: 13, color: UCU.maroon, fontWeight: 600 }}
+                sx={{ cursor: 'pointer', fontSize: 13, color: brand.textSecondary, fontWeight: 500 }}
               >
                 Home
               </Link>
-              <Typography sx={{ fontSize: 13, fontWeight: 700, color: UCU.maroon }}>
+              <Typography sx={{ fontSize: 13, fontWeight: 600, color: brand.textPrimary }}>
                 {pageLabel}
               </Typography>
             </Breadcrumbs>
 
             <Chip
               avatar={
-                <Avatar sx={{ bgcolor: `${avatarBg(username)} !important`, fontSize: 12 }}>
+                <Avatar sx={{ bgcolor: `${avatarBg(username)} !important`, fontSize: 11, width: 26, height: 26 }}>
                   {username[0]?.toUpperCase()}
                 </Avatar>
               }
               label={username}
               size="small"
               variant="outlined"
-              sx={{ borderColor: UCU.maroon, color: UCU.maroon, fontWeight: 600, fontSize: 12 }}
+              sx={{ borderColor: brand.border, color: brand.textPrimary, fontWeight: 500, fontSize: 12 }}
             />
           </Toolbar>
         </AppBar>
 
         {/* Page content */}
-        <Box component="main" sx={{ flexGrow: 1, p: 3, overflow: 'auto' }}>
+        <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 3 }, overflow: 'auto' }}>
           {children}
         </Box>
 
@@ -308,18 +315,15 @@ export default function ModernLayout({ children, user }) {
           sx={{
             textAlign: 'center',
             py: 1.5,
-            borderTop: '1px solid rgba(123,28,28,0.12)',
-            color: UCU.maroon,
+            borderTop: `1px solid ${brand.border}`,
+            color: brand.textSecondary,
             fontSize: 11,
             fontWeight: 500,
-            opacity: 0.7,
           }}
         >
-          © {new Date().getFullYear()} Uganda Christian University — Smart Queuing System
+          © {new Date().getFullYear()} Smart Queue — University Queuing System
         </Box>
       </Box>
     </Box>
   );
 }
-
-

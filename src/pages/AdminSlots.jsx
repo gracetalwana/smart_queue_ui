@@ -6,11 +6,13 @@ import {
     Box, Typography, Button, Dialog, DialogTitle, DialogContent,
     DialogActions, TextField, Table, TableHead, TableRow,
     TableCell, TableBody, Chip, CircularProgress, IconButton, Tooltip,
+    Paper, Stack,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import { getAllSlots, createSlot, updateSlot } from '../utils/api';
 import { fmtTime, fmtDate } from '../utils/format';
+import { brand } from '../theme';
 import { useToast } from '../hooks/useToast';
 import Toast from '../components/Toast';
 
@@ -89,52 +91,57 @@ export default function AdminSlots({ token }) {
 
     return (
         <Box>
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                <Typography variant="h5" fontWeight={700}>Time Slots</Typography>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
+                <Stack direction="row" alignItems="center" spacing={1.5}>
+                    <Box sx={{ width: 4, height: 26, bgcolor: brand.primary, borderRadius: 1 }} />
+                    <Typography variant="h5" fontWeight={800} color={brand.textPrimary}>Time Slots</Typography>
+                </Stack>
                 <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>
                     New Slot
                 </Button>
-            </Box>
+            </Stack>
 
             {loading ? (
                 <Box display="flex" justifyContent="center" mt={6}><CircularProgress /></Box>
             ) : (
-                <Table size="small">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Date</TableCell>
-                            <TableCell>Time</TableCell>
-                            <TableCell>Capacity</TableCell>
-                            <TableCell>Booked</TableCell>
-                            <TableCell>Status</TableCell>
-                            <TableCell align="right">Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {slots.map((s) => (
-                            <TableRow key={s.slot_id} hover>
-                                <TableCell>{fmtDate(s.slot_date)}</TableCell>
-                                <TableCell>{fmtTime(s.start_time)} – {fmtTime(s.end_time)}</TableCell>
-                                <TableCell>{s.max_capacity}</TableCell>
-                                <TableCell>{s.booked_count}</TableCell>
-                                <TableCell>
-                                    <Chip
-                                        label={s.is_active ? 'Active' : 'Inactive'}
-                                        color={s.is_active ? 'success' : 'default'}
-                                        size="small"
-                                    />
-                                </TableCell>
-                                <TableCell align="right">
-                                    <Tooltip title="Edit">
-                                        <IconButton size="small" onClick={() => openEdit(s)}>
-                                            <EditIcon fontSize="small" />
-                                        </IconButton>
-                                    </Tooltip>
-                                </TableCell>
+                <Paper>
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Date</TableCell>
+                                <TableCell>Time</TableCell>
+                                <TableCell>Capacity</TableCell>
+                                <TableCell>Booked</TableCell>
+                                <TableCell>Status</TableCell>
+                                <TableCell align="right">Actions</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHead>
+                        <TableBody>
+                            {slots.map((s) => (
+                                <TableRow key={s.slot_id} hover>
+                                    <TableCell>{fmtDate(s.slot_date)}</TableCell>
+                                    <TableCell>{fmtTime(s.start_time)} – {fmtTime(s.end_time)}</TableCell>
+                                    <TableCell>{s.max_capacity}</TableCell>
+                                    <TableCell>{s.booked_count}</TableCell>
+                                    <TableCell>
+                                        <Chip
+                                            label={s.is_active ? 'Active' : 'Inactive'}
+                                            color={s.is_active ? 'success' : 'default'}
+                                            size="small"
+                                        />
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        <Tooltip title="Edit">
+                                            <IconButton size="small" onClick={() => openEdit(s)}>
+                                                <EditIcon fontSize="small" />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </Paper>
             )}
 
             {/* Create / Edit Dialog */}

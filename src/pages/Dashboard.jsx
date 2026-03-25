@@ -14,15 +14,14 @@ import { useNavigate } from 'react-router-dom';
 import Chart from 'react-apexcharts';
 import { getQueueStats } from '../utils/api';
 import { fmtTime, fmtDate } from '../utils/format';
-
-const UCU = { maroon: '#7B1C1C', gold: '#C9A84C', dark: '#1A1A2E', light: '#F5F0EB' };
+import { brand } from '../theme';
 
 const STATUS_META = {
-  PENDING: { label: 'Pending', color: '#F59E0B', bg: '#FFF8E1' },
-  SERVING: { label: 'Serving', color: '#1A4A7B', bg: '#E8F4FD' },
-  SERVED: { label: 'Served', color: '#10B981', bg: '#E6F9F0' },
-  CANCELLED: { label: 'Cancelled', color: '#EF4444', bg: '#FEE2E2' },
-  NO_SHOW: { label: 'No-Show', color: '#6B7280', bg: '#F3F4F6' },
+  PENDING: { label: 'Pending', color: brand.warning, bg: brand.warningLight },
+  SERVING: { label: 'Serving', color: brand.info, bg: brand.infoLight },
+  SERVED: { label: 'Served', color: brand.success, bg: brand.successLight },
+  CANCELLED: { label: 'Cancelled', color: brand.error, bg: brand.errorLight },
+  NO_SHOW: { label: 'No-Show', color: brand.textSecondary, bg: '#F1F5F9' },
 };
 
 export default function Dashboard() {
@@ -50,7 +49,7 @@ export default function Dashboard() {
       label: "Today's Appointments",
       value: loading ? null : todayTotal,
       icon: <PeopleIcon sx={{ fontSize: 32 }} />,
-      accent: UCU.maroon, lightBg: '#FDF2F2',
+      accent: brand.primary, lightBg: brand.primaryLight,
       trend: 'All statuses', link: null,
     },
     {
@@ -64,7 +63,7 @@ export default function Dashboard() {
       label: 'In Queue',
       value: loading ? null : todayPending,
       icon: <QueueIcon sx={{ fontSize: 32 }} />,
-      accent: UCU.gold, lightBg: '#FFF8E1',
+      accent: brand.warning, lightBg: brand.warningLight,
       trend: 'Waiting now', link: '/admin/queue',
     },
     {
@@ -96,7 +95,7 @@ export default function Dashboard() {
         elevation={0}
         sx={{
           p: { xs: 3, md: 5 }, mb: 4, borderRadius: 4,
-          background: `linear-gradient(135deg, ${UCU.dark} 0%, ${UCU.maroon} 100%)`,
+          background: `linear-gradient(135deg, ${brand.sidebarBg} 0%, ${brand.primaryDark} 100%)`,
           color: '#fff', position: 'relative', overflow: 'hidden',
         }}
       >
@@ -104,7 +103,7 @@ export default function Dashboard() {
         <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ sm: 'center' }} spacing={2} sx={{ position: 'relative', zIndex: 1 }}>
           <Box>
             <Typography variant="h4" fontWeight={800} gutterBottom>
-              UCU Smart Queuing System
+              Smart Queuing System
             </Typography>
             <Typography variant="body1" sx={{ opacity: 0.85 }}>
               Monitor appointments, queues, and service performance in real-time.
@@ -112,7 +111,7 @@ export default function Dashboard() {
           </Box>
           <Stack direction="row" spacing={1}>
             <Button variant="contained" onClick={() => navigate('/book-slot')}
-              sx={{ bgcolor: UCU.gold, color: UCU.dark, fontWeight: 700, '&:hover': { bgcolor: '#b8953f' } }}>
+              sx={{ bgcolor: brand.accent, color: '#fff', fontWeight: 700, '&:hover': { bgcolor: '#7C3AED' } }}>
               Book Slot
             </Button>
             <Button variant="outlined" onClick={() => navigate('/reports')}
@@ -200,7 +199,7 @@ export default function Dashboard() {
                 options={{
                   chart: { toolbar: { show: false } },
                   xaxis: { categories: dailyDates },
-                  colors: [UCU.maroon],
+                  colors: [brand.primary],
                   plotOptions: { bar: { borderRadius: 6, columnWidth: '55%' } },
                   dataLabels: { enabled: false },
                   tooltip: { y: { formatter: (val) => `${val} appointment${val !== 1 ? 's' : ''}` } },
@@ -218,7 +217,7 @@ export default function Dashboard() {
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
           <Typography variant="h6" fontWeight={700}>Recent Appointments</Typography>
           <Button size="small" endIcon={<ArrowForwardIcon />} onClick={() => navigate('/reports')}
-            sx={{ color: UCU.maroon, fontWeight: 600 }}>
+            sx={{ color: brand.primary, fontWeight: 600 }}>
             View All
           </Button>
         </Stack>
@@ -241,7 +240,7 @@ export default function Dashboard() {
                       {fmtDate(appt.slot_date)} &middot; {fmtTime(appt.start_time)}&ndash;{fmtTime(appt.end_time)}
                     </Typography>
                   </Box>
-                  <Chip label={appt.reason || 'General'} size="small" sx={{ bgcolor: '#F5F0EB', fontWeight: 600, fontSize: 11 }} />
+                  <Chip label={appt.reason || 'General'} size="small" sx={{ bgcolor: brand.primaryLight, color: brand.primaryDark, fontWeight: 600, fontSize: 11 }} />
                   <Chip label={meta.label || appt.status} size="small"
                     sx={{ bgcolor: meta.bg, color: meta.color, fontWeight: 700, fontSize: 11 }} />
                 </Stack>

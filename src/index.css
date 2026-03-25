@@ -1,32 +1,47 @@
-/* ── Global Base Styles ─────────────────────────────────────────────────────
-   MUI's CssBaseline handles most resets. These rules apply to the outermost
-   shell — the #root div and the document body.
-   UCU colours are defined in main.jsx via createTheme() and do NOT live here.
+/* ── Global Base Styles ──────────────────────────────────────────────────────
+   MUI CssBaseline handles most resets. These apply to the root shell.
+   Colours come from theme.js via MUI ThemeProvider.
 ────────────────────────────────────────────────────────────────────────────── */
 :root {
-  font-family: "Inter", "Roboto", system-ui, Arial, sans-serif;
+  font-family:
+    "Inter",
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  /* Force light-mode only — no dark-mode flicker */
   color-scheme: light;
-  color: #1a1a1a;
-  background-color: #f9f5f0; /* warm cream — matches MUI background.default */
-
+  color: #0f172a;
+  background-color: #f8fafc;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Remove Vite's default body centering so MUI layout fills the viewport */
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: #f9f5f0;
+  background-color: #f8fafc;
 }
 
-/* The React mount point should fill the full height */
 #root {
   min-height: 100vh;
+}
+
+/* Smooth scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }

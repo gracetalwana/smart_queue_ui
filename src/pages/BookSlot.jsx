@@ -4,13 +4,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
     Box, Typography, Grid, Card, CardContent, CardActions,
-    Button, Chip, TextField, CircularProgress, Alert,
+    Button, Chip, TextField, CircularProgress, Alert, Paper, Stack, LinearProgress,
 } from '@mui/material';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PeopleIcon from '@mui/icons-material/People';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import { getSlots, bookAppointment } from '../utils/api';
 import { fmtTime, fmtDate } from '../utils/format';
+import { brand } from '../theme';
 import { useToast } from '../hooks/useToast';
 import Toast from '../components/Toast';
 
@@ -19,7 +21,7 @@ export default function BookSlot({ token }) {
     const [date, setDate] = useState(today);
     const [slots, setSlots] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [booking, setBooking] = useState(null); // id being booked
+    const [booking, setBooking] = useState(null);
     const { toast, showToast, hideToast } = useToast();
 
     const loadSlots = useCallback(async () => {
@@ -50,15 +52,23 @@ export default function BookSlot({ token }) {
     };
 
     const remaining = (s) => s.max_capacity - (s.booked_count || 0);
+    const pct = (s) => Math.round(((s.booked_count || 0) / s.max_capacity) * 100);
 
     return (
         <Box>
-            <Typography variant="h5" fontWeight={700} mb={3}>
-                Book an Appointment
+            {/* Header */}
+            <Stack direction="row" alignItems="center" spacing={1.5} mb={1}>
+                <Box sx={{ width: 4, height: 26, bgcolor: brand.primary, borderRadius: 1 }} />
+                <Typography variant="h5" fontWeight={800} color={brand.textPrimary}>
+                    Book an Appointment
+                </Typography>
+            </Stack>
+            <Typography variant="body2" color="text.secondary" mb={3}>
+                Choose a date and select an available slot.
             </Typography>
 
             {/* Date picker */}
-            <Box mb={3}>
+            <Paper sx={{ p: 2, mb: 3, display: 'inline-flex' }}>
                 <TextField
                     type="date"
                     label="Select Date"
@@ -68,39 +78,57 @@ export default function BookSlot({ token }) {
                     onChange={(e) => setDate(e.target.value)}
                     size="small"
                 />
-            </Box>
+            </Paper>
 
             {loading ? (
                 <Box display="flex" justifyContent="center" mt={6}><CircularProgress /></Box>
             ) : slots.length === 0 ? (
-                <Alert severity="info">No available slots for {date}.</Alert>
+                <Alert severity="info" icon={<EventAvailableIcon />} sx={{ borderRadius: 3 }}>
+                    No available slots for {fmtDate(date)}.
+                </Alert>
             ) : (
                 <Grid container spacing={3}>
                     {slots.map((slot) => {
                         const left = remaining(slot);
                         const full = left <= 0;
+                        const fill = pct(slot);
                         return (
                             <Grid item xs={12} sm={6} md={4} key={slot.slot_id}>
-                                <Card variant="outlined" sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', opacity: full ? 0.6 : 1 }}>
+                                    {/* Top accent */}
+                                    <Box sx={{ height: 4, bgcolor: full ? brand.error : brand.primary, borderRadius: '16px 16px 0 0' }} />
                                     <CardContent sx={{ flexGrow: 1 }}>
-                                        <Box display="flex" alignItems="center" gap={1} mb={1}>
-                                            <CalendarMonthIcon fontSize="small" color="primary" />
-                                            <Typography fontWeight={600}>{fmtDate(slot.slot_date)}</Typography>
-                                        </Box>
-                                        <Box display="flex" alignItems="center" gap={1} mb={1}>
-                                            <AccessTimeIcon fontSize="small" />
-                                            <Typography variant="body2">
+                                        <Stack direction="row" alignItems="center" gap={1} mb={1.5}>
+                                            <CalendarMonthIcon fontSize="small" sx={{ color: brand.primary }} />
+                                            <Typography fontWeight={700}>{fmtDate(slot.slot_date)}</Typography>
+                                        </Stack>
+                                        <Stack direction="row" alignItems="center" gap={1} mb={1}>
+                                            <AccessTimeIcon fontSize="small" sx={{ color: brand.textSecondary }} />
+                                            <Typography variant="body2" color="text.secondary">
                                                 {fmtTime(slot.start_time)} – {fmtTime(slot.end_time)}
                                             </Typography>
-                                        </Box>
-                                        <Box display="flex" alignItems="center" gap={1}>
-                                            <PeopleIcon fontSize="small" />
-                                            <Typography variant="body2">
+                                        </Stack>
+                                        <Stack direction="row" alignItems="center" gap={1} mb={1.5}>
+                                            <PeopleIcon fontSize="small" sx={{ color: brand.textSecondary }} />
+                                            <Typography variant="body2" color="text.secondary">
                                                 {left} / {slot.max_capacity} spots left
                                             </Typography>
-                                        </Box>
+                                        </Stack>
+                                        {/* Capacity bar */}
+                                        <LinearProgress
+                                            variant="determinate"
+                                            value={fill}
+                                            sx={{
+                                                height: 6, borderRadius: 3,
+                                                bgcolor: `${full ? brand.error : brand.primary}15`,
+                                                '& .MuiLinearProgress-bar': {
+                                                    bgcolor: full ? brand.error : fill > 75 ? brand.warning : brand.primary,
+                                                    borderRadius: 3,
+                                                },
+                                            }}
+                                        />
                                         {slot.description && (
-                                            <Typography variant="caption" color="text.secondary" mt={1} display="block">
+                                            <Typography variant="caption" color="text.secondary" mt={1.5} display="block">
                                                 {slot.description}
                                             </Typography>
                                         )}

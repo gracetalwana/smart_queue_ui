@@ -20,28 +20,21 @@ import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ReactApexChart from 'react-apexcharts';
-
-const UCU = {
-    maroon: '#7B1C1C',
-    maroonDark: '#5C1010',
-    gold: '#C9A227',
-    goldLight: '#F5E6B0',
-    white: '#FFFFFF',
-};
+import { brand } from '../theme';
 
 const STATUS_META = {
-    PENDING: { label: 'Pending', color: '#E65100', bg: '#FBE9E7', icon: <HourglassTopIcon sx={{ fontSize: 20 }} /> },
-    SERVING: { label: 'Serving', color: '#1A4A7B', bg: '#E8F4FD', icon: <ConfirmationNumberIcon sx={{ fontSize: 20 }} /> },
-    SERVED: { label: 'Served', color: '#1A5C2E', bg: '#E6F4EA', icon: <CheckCircleIcon sx={{ fontSize: 20 }} /> },
-    CANCELLED: { label: 'Cancelled', color: '#888', bg: '#F5F5F5', icon: <ReportProblemIcon sx={{ fontSize: 20 }} /> },
-    NO_SHOW: { label: 'No-Show', color: '#7B1C1C', bg: '#FDF2F2', icon: <ReportProblemIcon sx={{ fontSize: 20 }} /> },
+    PENDING: { label: 'Pending', color: brand.warning, bg: brand.warningLight, icon: <HourglassTopIcon sx={{ fontSize: 20 }} /> },
+    SERVING: { label: 'Serving', color: brand.info, bg: brand.infoLight, icon: <ConfirmationNumberIcon sx={{ fontSize: 20 }} /> },
+    SERVED: { label: 'Served', color: brand.success, bg: brand.successLight, icon: <CheckCircleIcon sx={{ fontSize: 20 }} /> },
+    CANCELLED: { label: 'Cancelled', color: brand.textSecondary, bg: '#F1F5F9', icon: <ReportProblemIcon sx={{ fontSize: 20 }} /> },
+    NO_SHOW: { label: 'No-Show', color: brand.error, bg: brand.errorLight, icon: <ReportProblemIcon sx={{ fontSize: 20 }} /> },
 };
 
 const REASON_META = {
-    general: { label: 'General', color: '#1A4A7B', bg: '#E8F4FD' },
-    billing: { label: 'Billing', color: '#1A5C2E', bg: '#E6F4EA' },
-    transcript: { label: 'Transcript', color: '#6A1B9A', bg: '#F3E5F5' },
-    other: { label: 'Other', color: '#E65100', bg: '#FBE9E7' },
+    general: { label: 'General', color: brand.info, bg: brand.infoLight },
+    billing: { label: 'Billing', color: brand.success, bg: brand.successLight },
+    transcript: { label: 'Transcript', color: brand.accent, bg: brand.accentLight },
+    other: { label: 'Other', color: brand.warning, bg: brand.warningLight },
 };
 
 const statusCount = (arr, status) =>
@@ -90,7 +83,7 @@ export default function Reports({ token }) {
 
     if (loading) return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, py: 12 }}>
-            <CircularProgress sx={{ color: UCU.maroon }} size={44} thickness={3} />
+            <CircularProgress sx={{ color: brand.primary }} size={44} thickness={3} />
             <Typography variant="body2" color="text.secondary">Loading analytics…</Typography>
         </Box>
     );
@@ -149,10 +142,10 @@ export default function Reports({ token }) {
     const barOptions = {
         chart: { type: 'bar', toolbar: { show: false }, animations: { enabled: true, speed: 600 } },
         plotOptions: { bar: { borderRadius: 6, columnWidth: '55%', dataLabels: { position: 'top' } } },
-        dataLabels: { enabled: true, offsetY: -20, style: { fontSize: '11px', fontWeight: 700, colors: [UCU.maroon] } },
+        dataLabels: { enabled: true, offsetY: -20, style: { fontSize: '11px', fontWeight: 700, colors: [brand.primary] } },
         xaxis: { categories: barCategories, axisBorder: { show: false }, axisTicks: { show: false }, labels: { style: { fontSize: '11px', colors: '#777' }, rotate: -25, rotateAlways: true } },
         yaxis: { labels: { style: { fontSize: '11px', colors: '#aaa' } } },
-        colors: [UCU.maroon],
+        colors: [brand.primary],
         grid: { borderColor: 'rgba(0,0,0,0.06)', strokeDashArray: 4, yaxis: { lines: { show: true } }, xaxis: { lines: { show: false } } },
         tooltip: { y: { formatter: (val) => `${val} appointment${val === 1 ? '' : 's'}` } },
         legend: { show: false },
@@ -165,7 +158,7 @@ export default function Reports({ token }) {
             <Box
                 sx={{
                     mb: 3.5, borderRadius: 3, overflow: 'hidden',
-                    background: `linear-gradient(135deg, ${UCU.maroon} 0%, #A52828 100%)`,
+                    background: `linear-gradient(135deg, ${brand.sidebarBg} 0%, ${brand.primaryDark} 100%)`,
                     p: { xs: 2.5, md: 3 },
                     boxShadow: '0 4px 20px rgba(123,28,28,0.28)',
                     position: 'relative',
@@ -175,10 +168,10 @@ export default function Reports({ token }) {
                 <Box sx={{ position: 'absolute', top: -50, right: -50, width: 180, height: 180, borderRadius: '50%', bgcolor: 'rgba(201,162,39,0.18)', filter: 'blur(35px)' }} />
                 <Stack direction="row" alignItems="center" spacing={2} sx={{ position: 'relative', zIndex: 1 }}>
                     <Box sx={{ bgcolor: 'rgba(255,255,255,0.12)', borderRadius: 2, p: 1.2 }}>
-                        <AssessmentIcon sx={{ color: UCU.gold, fontSize: 28 }} />
+                        <AssessmentIcon sx={{ color: brand.primary, fontSize: 28 }} />
                     </Box>
                     <Box>
-                        <Typography variant="h5" fontWeight={900} color={UCU.white}>Reports & Analytics</Typography>
+                        <Typography variant="h5" fontWeight={900} color="#fff">Reports & Analytics</Typography>
                         <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.65)' }}>
                             Comprehensive overview of your Smart Queuing System data
                         </Typography>
@@ -188,9 +181,9 @@ export default function Reports({ token }) {
 
             {/* ── KPI Row ── */}
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mb={3.5} flexWrap="wrap" useFlexGap sx={{ width: '100%' }}>
-                <KpiCard icon={<ConfirmationNumberIcon />} label="Total Appointments" value={totalAppts} accent={UCU.maroon} lightBg="#FDF2F2" sub="All time" />
-                <KpiCard icon={<PeopleAltIcon />} label="Registered Users" value={totalUsers} accent="#1A4A7B" lightBg="#EEF4FB" sub="All accounts" />
-                <KpiCard icon={<EventAvailableIcon />} label="Today's Bookings" value={todayTotal} accent="#1A5C2E" lightBg="#EEF8F1" sub="Booked today" />
+                <KpiCard icon={<ConfirmationNumberIcon />} label="Total Appointments" value={totalAppts} accent={brand.primary} lightBg={brand.primaryLight} sub="All time" />
+                <KpiCard icon={<PeopleAltIcon />} label="Registered Users" value={totalUsers} accent={brand.accent} lightBg={brand.accentLight} sub="All accounts" />
+                <KpiCard icon={<EventAvailableIcon />} label="Today's Bookings" value={todayTotal} accent={brand.success} lightBg={brand.successLight} sub="Booked today" />
             </Stack>
 
             {/* ── Charts row 1: status donut + daily volume bar ── */}
@@ -244,8 +237,8 @@ export default function Reports({ token }) {
                         <Box sx={{ p: 2.5 }}>
                             <Grid container spacing={2} mb={2.5}>
                                 {[
-                                    { label: 'Served', count: served, color: '#1A5C2E', bg: '#E6F4EA', icon: <CheckCircleIcon sx={{ fontSize: 20 }} /> },
-                                    { label: 'No-Show', count: noShowCount, color: '#7B1C1C', bg: '#FDF2F2', icon: <ReportProblemIcon sx={{ fontSize: 20 }} /> },
+                                    { label: 'Served', count: served, color: brand.success, bg: brand.successLight, icon: <CheckCircleIcon sx={{ fontSize: 20 }} /> },
+                                    { label: 'No-Show', count: noShowCount, color: brand.error, bg: brand.errorLight, icon: <ReportProblemIcon sx={{ fontSize: 20 }} /> },
                                 ].map(s => (
                                     <Grid item xs={6} key={s.label}>
                                         <Box sx={{ bgcolor: s.bg, borderRadius: 2.5, p: 2, textAlign: 'center' }}>
@@ -259,8 +252,8 @@ export default function Reports({ token }) {
 
                             <Stack spacing={2}>
                                 {[
-                                    { label: 'Service Rate', pct: servRate, color: '#1A5C2E' },
-                                    { label: 'No-Show Rate', pct: noShowRate, color: UCU.maroon },
+                                    { label: 'Service Rate', pct: servRate, color: brand.success },
+                                    { label: 'No-Show Rate', pct: noShowRate, color: brand.error },
                                 ].map(r => (
                                     <Box key={r.label}>
                                         <Stack direction="row" justifyContent="space-between" mb={0.6}>
@@ -310,7 +303,7 @@ export default function Reports({ token }) {
                                         const rmeta = REASON_META[appt.reason] ?? { label: appt.reason, color: '#777', bg: '#eee' };
                                         return (
                                             <TableRow key={appt.appointment_id} hover
-                                                sx={{ '&:last-child td': { border: 0 }, transition: '0.15s', '&:hover': { bgcolor: 'rgba(123,28,28,0.02)' } }}>
+                                                sx={{ '&:last-child td': { border: 0 }, transition: '0.15s' }}>
                                                 <TableCell>
                                                     <Stack direction="row" alignItems="center" spacing={1.5}>
                                                         <Avatar sx={{ bgcolor: meta.bg, color: meta.color, width: 32, height: 32 }}>

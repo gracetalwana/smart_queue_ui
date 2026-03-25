@@ -1,16 +1,11 @@
 /**
  * pages/AdminQueue.jsx – Admin: live queue management console
- *
- * Shows all appointments for a selected slot and lets staff:
- *  - Mark a student as SERVING (called to counter)
- *  - Mark as SERVED (done)
- *  - Mark as NO_SHOW
  */
 import { useState, useEffect, useCallback } from 'react';
 import {
     Box, Typography, MenuItem, Select, InputLabel, FormControl,
     Table, TableHead, TableRow, TableCell, TableBody, Chip,
-    IconButton, Tooltip, CircularProgress, Alert,
+    IconButton, Tooltip, CircularProgress, Alert, Paper, Stack,
 } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import CheckIcon from '@mui/icons-material/Check';
@@ -21,6 +16,7 @@ import {
     markServing, markServed, markNoShow,
 } from '../utils/api';
 import { fmtTime, fmtDate } from '../utils/format';
+import { brand } from '../theme';
 import { useToast } from '../hooks/useToast';
 import Toast from '../components/Toast';
 
@@ -86,8 +82,14 @@ export default function AdminQueue({ token }) {
 
     return (
         <Box>
-            <Typography variant="h5" fontWeight={700} mb={3}>
-                Queue Console
+            <Stack direction="row" alignItems="center" spacing={1.5} mb={1}>
+                <Box sx={{ width: 4, height: 26, bgcolor: brand.primary, borderRadius: 1 }} />
+                <Typography variant="h5" fontWeight={800} color={brand.textPrimary}>
+                    Queue Console
+                </Typography>
+            </Stack>
+            <Typography variant="body2" color="text.secondary" mb={3}>
+                Manage appointments in real-time.
             </Typography>
 
             {/* Slot selector */}
@@ -120,75 +122,77 @@ export default function AdminQueue({ token }) {
                 ) : appointments.length === 0 ? (
                     <Alert severity="info">No appointments for this slot.</Alert>
                 ) : (
-                    <Table size="small">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>#</TableCell>
-                                <TableCell>Queue No.</TableCell>
-                                <TableCell>Student</TableCell>
-                                <TableCell>Reason</TableCell>
-                                <TableCell>Status</TableCell>
-                                <TableCell align="center">Actions</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {appointments.map((a, i) => (
-                                <TableRow key={a.appointment_id} hover>
-                                    <TableCell>{i + 1}</TableCell>
-                                    <TableCell><strong>{a.queue_number}</strong></TableCell>
-                                    <TableCell>{a.full_name || a.username}</TableCell>
-                                    <TableCell>{a.reason}</TableCell>
-                                    <TableCell>
-                                        <Chip label={a.status} color={statusColor[a.status] || 'default'} size="small" />
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        {a.status === 'PENDING' && (
-                                            <Tooltip title="Call to counter (Serving)">
-                                                <span>
-                                                    <IconButton
-                                                        size="small"
-                                                        color="info"
-                                                        disabled={acting === a.appointment_id}
-                                                        onClick={() => act(a.appointment_id, markServing)}
-                                                    >
-                                                        {acting === a.appointment_id ? <CircularProgress size={14} /> : <PlayArrowIcon fontSize="small" />}
-                                                    </IconButton>
-                                                </span>
-                                            </Tooltip>
-                                        )}
-                                        {a.status === 'SERVING' && (
-                                            <>
-                                                <Tooltip title="Mark as Served">
-                                                    <span>
-                                                        <IconButton
-                                                            size="small"
-                                                            color="success"
-                                                            disabled={acting === a.appointment_id}
-                                                            onClick={() => act(a.appointment_id, markServed)}
-                                                        >
-                                                            {acting === a.appointment_id ? <CircularProgress size={14} /> : <CheckIcon fontSize="small" />}
-                                                        </IconButton>
-                                                    </span>
-                                                </Tooltip>
-                                                <Tooltip title="Mark as No-Show">
-                                                    <span>
-                                                        <IconButton
-                                                            size="small"
-                                                            color="error"
-                                                            disabled={acting === a.appointment_id}
-                                                            onClick={() => act(a.appointment_id, markNoShow)}
-                                                        >
-                                                            <PersonOffIcon fontSize="small" />
-                                                        </IconButton>
-                                                    </span>
-                                                </Tooltip>
-                                            </>
-                                        )}
-                                    </TableCell>
+                    <Paper>
+                        <Table size="small">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>#</TableCell>
+                                    <TableCell>Queue No.</TableCell>
+                                    <TableCell>Student</TableCell>
+                                    <TableCell>Reason</TableCell>
+                                    <TableCell>Status</TableCell>
+                                    <TableCell align="center">Actions</TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHead>
+                            <TableBody>
+                                {appointments.map((a, i) => (
+                                    <TableRow key={a.appointment_id} hover>
+                                        <TableCell>{i + 1}</TableCell>
+                                        <TableCell><strong>{a.queue_number}</strong></TableCell>
+                                        <TableCell>{a.full_name || a.username}</TableCell>
+                                        <TableCell>{a.reason}</TableCell>
+                                        <TableCell>
+                                            <Chip label={a.status} color={statusColor[a.status] || 'default'} size="small" />
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            {a.status === 'PENDING' && (
+                                                <Tooltip title="Call to counter (Serving)">
+                                                    <span>
+                                                        <IconButton
+                                                            size="small"
+                                                            color="info"
+                                                            disabled={acting === a.appointment_id}
+                                                            onClick={() => act(a.appointment_id, markServing)}
+                                                        >
+                                                            {acting === a.appointment_id ? <CircularProgress size={14} /> : <PlayArrowIcon fontSize="small" />}
+                                                        </IconButton>
+                                                    </span>
+                                                </Tooltip>
+                                            )}
+                                            {a.status === 'SERVING' && (
+                                                <>
+                                                    <Tooltip title="Mark as Served">
+                                                        <span>
+                                                            <IconButton
+                                                                size="small"
+                                                                color="success"
+                                                                disabled={acting === a.appointment_id}
+                                                                onClick={() => act(a.appointment_id, markServed)}
+                                                            >
+                                                                {acting === a.appointment_id ? <CircularProgress size={14} /> : <CheckIcon fontSize="small" />}
+                                                            </IconButton>
+                                                        </span>
+                                                    </Tooltip>
+                                                    <Tooltip title="Mark as No-Show">
+                                                        <span>
+                                                            <IconButton
+                                                                size="small"
+                                                                color="error"
+                                                                disabled={acting === a.appointment_id}
+                                                                onClick={() => act(a.appointment_id, markNoShow)}
+                                                            >
+                                                                <PersonOffIcon fontSize="small" />
+                                                            </IconButton>
+                                                        </span>
+                                                    </Tooltip>
+                                                </>
+                                            )}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </Paper>
                 )
             )}
 

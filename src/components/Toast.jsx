@@ -1,21 +1,5 @@
 /**
- * components/Toast.jsx — UCU-Branded Toast Notification
- *
- * A polished Snackbar that slides up from the bottom-right corner.
- * Supports four severities: success (green), error (red), info (blue), warning (gold).
- * The UCU maroon accent bar on the left gives it a branded feel.
- *
- * PROPS:
- *   toast   – { open, message, severity, title } — from useToast()
- *   onClose – function to close the toast — pass hideToast from useToast()
- *
- * USAGE:
- *   import Toast from '../components/Toast';
- *   import { useToast } from '../hooks/useToast';
- *
- *   const { toast, showToast, hideToast } = useToast();
- *   showToast('Appointment booked!', 'success', 'Done');
- *   <Toast toast={toast} onClose={hideToast} />
+ * components/Toast.jsx — Modern Toast Notification
  */
 
 import { Snackbar, Alert, AlertTitle, Slide, Typography, Box } from '@mui/material';
@@ -23,13 +7,12 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { brand } from '../theme';
 
-// Animate the toast sliding up from the bottom
 function SlideUp(props) {
     return <Slide {...props} direction="up" />;
 }
 
-// Map severity → icon
 const ICONS = {
     success: <CheckCircleOutlineIcon fontSize="small" />,
     error: <ErrorOutlineIcon fontSize="small" />,
@@ -37,12 +20,11 @@ const ICONS = {
     warning: <WarningAmberIcon fontSize="small" />,
 };
 
-// Map severity → left-border accent colour (UCU maroon for success, standard for rest)
 const ACCENTS = {
-    success: '#7B1C1C',   // UCU maroon
-    error: '#D32F2F',
-    info: '#0288D1',
-    warning: '#C9A227',   // UCU gold
+    success: brand.success,
+    error: brand.error,
+    info: brand.primary,
+    warning: brand.warning,
 };
 
 export default function Toast({ toast, onClose }) {
@@ -73,12 +55,11 @@ export default function Toast({ toast, onClose }) {
                     borderRadius: 2.5,
                     boxShadow: '0 8px 32px rgba(0,0,0,0.22)',
                     borderLeft: `5px solid ${ACCENTS[severity]}`,
-                    // Override filled background to be slightly softer
                     ...(severity === 'success' && {
-                        bgcolor: '#1B4332',
+                        bgcolor: '#065F46',
                     }),
                     ...(severity === 'warning' && {
-                        bgcolor: '#7B4F00',
+                        bgcolor: '#92400E',
                     }),
                     '& .MuiAlert-message': { width: '100%' },
                     '& .MuiAlert-icon': { alignItems: 'center' },
@@ -93,7 +74,7 @@ export default function Toast({ toast, onClose }) {
                     {message}
                 </Typography>
 
-                {/* Subtle UCU progress bar that shrinks as the toast auto-hides */}
+                {/* Progress bar that shrinks as the toast auto-hides */}
                 <Box
                     sx={{
                         position: 'absolute',
